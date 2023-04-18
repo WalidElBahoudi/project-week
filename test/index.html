@@ -1,55 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/styles.css" />
+    <title>Document</title>
+  </head>
 
-<head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="css/styles.css">
-	<title>Document</title>
-</head>
+  <body>
+    <div class="container">
+      <h1>Multiplayer Word Game</h1>
 
-<body>
-	<div class="container">
-		<h1>Multiplayer Word Game</h1>
+      <div id="rules-popup">
+        <h2>Rules of the Game</h2>
+        <p>
+          Within a time limit of 3 minutes, you must find as many words as
+          possible by forming chains of contiguous letters. The longer the word,
+          the more points you score.
+        </p>
+        <h2>Points</h2>
+        <ul>
+          <li>3 letters = 1 point</li>
+          <li>4 letters = 1 points</li>
+          <li>5 letters = 2 points</li>
+          <li>6 letters = 3 points</li>
+          <li>7 letters = 5 points</li>
+          <li>8 letters = 11 points</li>
+          <li>8 or more letters = word length * 2 points</li>
+          <li>cannot be lower than 3 letters</li>
+        </ul>
+        <button type="button" id="close-rules-btn">Close</button>
+      </div>
+      <button type="button" id="rules-btn">Click here to show the rules</button>
 
-		<div id="rules-popup">
-			<h2>Rules of the Game</h2>
-			<p>Within a time limit of 3 minutes, you must find as many words as possible by forming chains of contiguous
-				letters. The longer the word, the more points you score.</p>
-			<h2>Points</h2>
-			<ul>
-				<li>3 letters = 1 point</li>
-				<li>4 letters = 1 points</li>
-				<li>5 letters = 2 points</li>
-				<li>6 letters = 3 points</li>
-				<li>7 letters = 5 points</li>
-				<li>8 letters = 11 points</li>
-				<li>8 or more letters = word length * 2 points</li>
-				<li>cannot be lower than 3 letters</li>
-			</ul>
-			<button type="button" id="close-rules-btn">Close</button>
-		</div>
-		<button type="button" id="rules-btn">Click here to show the rules</button>
+      <div id="leaderboard-popup">
+        <h2>Leaderboard</h2>
+        <ul id="ulLeaderboard"></ul>
+        <button type="button" id="close-leader-btn">Close</button>
+      </div>
 
-		<div id="leaderboard-popup">
-			<h2>Leaderboard</h2>
-			<ul id="ulLeaderboard"></ul>
-			<button type="button" id="close-leader-btn">Close</button>
-		</div>
+      <div id="game-grid"></div>
 
-		<div id="game-board">
-			<table></table>
-		</div>
-		<button type="submit" id="start-button">Start Game</button>
-		<button type="reset" id="reset-button">New Game</button>
-		<p id="timer">Time Remaining: 0</p>
-		<p id="word-list">Words Found:</p>
-		<input type="text" id="word-input" placeholder="Enter word">
-		<button type="button" id="submit-button">Submit</button>
-		<p id="message"></p>
-	</div>
-	<script src="js/scripts.js"></script>
-</body>
-
+      <button type="submit" id="start-button">Start Game</button>
+      <button type="reset" id="reset-button">New Game</button>
+      <p id="timer">Time Remaining: 0</p>
+      <p id="word-list">Words Found:</p>
+      <input type="text" id="word-input" placeholder="Enter word" />
+      <button type="button" id="submit-button">Submit</button>
+      <p id="message"></p>
+    </div>
+    <script src="js/scripts.js"></script>
+  </body>
 </html>

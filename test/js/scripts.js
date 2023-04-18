@@ -11,21 +11,20 @@ const wordInput = document.querySelector('#word-input');
 const wordList = document.querySelector('#word-list');
 
 function generateBoard() {
-	const table = document.querySelector('table');
-
+	const gameGrid = document.querySelector('#game-grid');
+  
 	for (let i = 0; i < letters.length; i++) {
-		const row = document.createElement('tr');
-
-		for (let j = 0; j < letters[i].length; j++) {
-			const cell = document.createElement('td');
-			cell.textContent = letters[i][j];
-			cell.addEventListener('click', selectLetter);
-			row.appendChild(cell);
-		}
-
-		table.appendChild(row);
+	  for (let j = 0; j < letters[i].length; j++) {
+		const cellButton = document.createElement('button');
+		cellButton.className = 'grid-cell';
+		cellButton.id = `cell-${i * letters.length + j + 1}`;
+		cellButton.textContent = letters[i][j];
+		cellButton.addEventListener('click', selectLetter);
+		gameGrid.appendChild(cellButton);
+	  }
 	}
-}
+  }
+  
 
 function selectLetter(event) {
 	const cell = event.target;
