@@ -31,23 +31,26 @@ let board = document.querySelector("#board");
 
 function generateBoard() {
 	let size = 4; // set the size of the board
-	let vowels = "AEIOU"; // possible vowels
-	let consonants = "BCDFGHJKLMNPQRSTVWXYZ"; // possible consonants
+	const vowels = ["#", "A", "E", "I", "O", "U"]; // possible vowels 
+	const consonants = ["#", "B", "C", "D", "F", "G", "H", "J", "K", "L", "M", "N", "P", "R", "S", "T", "V", "W", "X", "Y", "Z"]; // possible consonants
 	let boardHTML = "";
-	let numVowels = Math.ceil(size * size * 0.5); // set the number of vowels to 50% of the total number of letters
+	//let numVowels = Math.ceil(size * size * 0.5); // set the number of vowels to 50% of the total number of letters
 
 	for (let i = 0; i < size; i++) {
 		boardHTML += "<tr>";
 		for (let j = 0; j < size; j++) {
+			let randomNum = Math.floor(Math.random() * 10) + 1;
 			let randomLetter;
-			if (numVowels > 0) {
-				randomLetter = vowels.charAt(Math.floor(Math.random() * vowels.length));
-				numVowels--;
-			} else {
-				randomLetter = consonants.charAt(Math.floor(Math.random() * consonants.length));
+			let randomVowels = Math.floor(Math.random() * 5) + 1;
+			let randomConsonants = Math.floor(Math.random() * 20) + 1;
+			if (randomNum <= 4) {
+				randomLetter = vowels[randomVowels];
+			} else if (randomNum > 4) {
+				randomLetter = consonants[randomConsonants];
 			}
 			let cellId = `cell-${i}-${j}`; // generate unique identifier for cell
 			boardHTML += `<td id="${cellId}">${randomLetter}</td>`; // set id attribute of cell
+			console.log(randomLetter);
 		}
 		boardHTML += "</tr>";
 	}
@@ -128,14 +131,19 @@ function ScoreCalc(word) {
 		score += word.length * 2;
 	}
 	if (word.length < 3) {
-		alert("word needs to have a minimum of 3 characters.");
 	}
 	return score
 }
 
-function submitWord() {
+async function submitWord() {
 	const apiUrl = `https://api.dictionaryapi.dev/api/v2/entries/en/${wordInput.value}`;
 	message.innerHTML = '';
+
+	const audioUrl = await fetchSound();
+	if (audioUrl) {
+	  const audio = new Audio(audioUrl);
+	  audio.play();
+	}
 
 	if (wordInput.value.length < 3) {
 		message.innerHTML = 'Word must have at least 3 characters!';
@@ -180,6 +188,9 @@ function submitWord() {
 				const score = ScoreCalc(word);
 				if (wordsFound.includes(word)) {
 					message.innerHTML = 'Word already found!';
+					selectedLetters.forEach(cell => cell.classList.remove('selected'));
+					selectedLetters = [];
+					wordInput.value = "";
 				} else {
 					wordsFound.push(word);
 					wordList.innerHTML = `Words Found: ${wordsFound.join(', ')}`;
@@ -192,8 +203,7 @@ function submitWord() {
 
 					// update leaderboard
 					const liLeaderboard = document.createElement('li');
-					liLeaderboard.innerText = `Total Score: ${totalScore}`;
-					ulLeaderboard.appendChild(liLeaderboard);
+					ulLeaderboard.innerHTML = `<li>Total Score: ${totalScore}<li>`;
 
 					// Clear selected letters and input value
 					selectedLetters.forEach(cell => cell.classList.remove('selected'));
@@ -286,3 +296,17 @@ document.addEventListener('keydown', function (e) {
 		submitWord();
 	}
 });
+
+async function fetchSound() {
+	const SEARCH_QUERY = "Alien Space Sound 04"; // search query
+	const API_KEY = 'EdJQ9aaxiJcFgnXjFdnh6KmKFs1fC4nqO1MoPaMu'; // replace with your Freesound API key
+	const API_URL = `https://freesound.org/apiv2/search/text/?query=${SEARCH_QUERY}&token=${API_KEY}&fields=name,previews`;
+	const response = await fetch(API_URL);
+	if (!response.ok) {
+		console.log("Error fetching sound");
+		return null;
+	}
+	const data = await response.json();
+	const previewUrl = data.results[0].previews["preview-hq-mp3"]; // get preview audio URL for the first result
+	return previewUrl;
+}
