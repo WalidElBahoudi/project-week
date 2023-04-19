@@ -13,7 +13,8 @@ body {
 }
 
 h1 {
-    color: #333;
+    color: #ffffff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     margin-bottom: 30px;
     text-align: center;
 }
@@ -79,15 +80,17 @@ input {
 #timer,
 #word-list,
 #message {
-    color: #333;
+    color: #ffffff;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
     font-size: 20px;
     margin: 20px;
     text-align: center;
 }
 
 #message {
-    color: red;
+    color: #ff0000;
     font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 /*Popup*/
@@ -146,3 +149,85 @@ header .wrapper {
 }
 
 /*EINDE WRAPPER*/
+/* Theme spatial */
+@keyframes twinkling {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  
+  #game-board {
+    background-color: #1a1a1a;
+    border: 2px solid #fff;
+  }
+  
+  table {
+    background-color: transparent;
+  }
+  
+  td {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+  }
+  
+  td:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+  
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url("https://images.unsplash.com/photo-1464802686167-b939a6910659");
+    background-size: cover;
+    z-index: -1;
+    opacity: 0.6;
+  }
+  
+  body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(ellipse at bottom, rgba(0, 0, 0, 0.4) 0%, #000 70%);
+    z-index: -1;
+    opacity: 0.8;
+  }
+  
+  .star {
+    position: fixed;
+    width: 2px;
+    height: 2px;
+    background-color: white;
+    opacity: 0;
+    z-index: -2;
+    animation-name: twinkling;
+    animation-duration: 1.5s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+  }
+  
+  /* Ajoutez des animations de transition aux éléments interactifs */
+  button,
+  input,
+  td {
+    transition: all 0.3s ease;
+  }
+
+  /* Thème pour la classe "container" */
+.container {
+    background-color: rgba(28, 28, 38, 0.9);
+    border-radius: 10px;
+    border: 3px solid rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(5px);
+  }
+  

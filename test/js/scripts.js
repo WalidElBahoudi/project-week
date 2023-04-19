@@ -286,3 +286,17 @@ document.addEventListener('keydown', function (e) {
 		submitWord();
 	}
 });
+
+function createStars(numberOfStars) {
+	for (let i = 0; i < numberOfStars; i++) {
+	  const star = document.createElement('div');
+	  star.className = 'star';
+	  star.style.top = `${Math.random() * 100}vh`;
+	  star.style.left = `${Math.random() * 100}vw`;
+	  star.style.animationDelay = `${Math.random() * 2}s`;
+	  document.body.appendChild(star);
+	}
+  }
+  
+  createStars(150); // Ajustez le nombre d'étoiles en fonction de vos préférences
+  
