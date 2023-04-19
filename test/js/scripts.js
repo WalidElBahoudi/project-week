@@ -17,7 +17,7 @@ const rulesPopup = document.querySelector("#rules-popup");
 
 const closeLeaderBtn = document.querySelector("#close-leader-btn");
 const leaderPopup = document.querySelector("#leaderboard-popup");
-const ulLeaderboard = document.querySelector("#ulLeaderboard");
+const ulLeaderboard = document.querySelector("#ulLeaderboard");					// ul for top players list
 
 const wordList = document.querySelector('#word-list');
 const wordInput = document.querySelector('#word-input');
@@ -30,22 +30,38 @@ let board = document.querySelector("#board");
 
 
 function generateBoard() {
-	const table = document.querySelector('table');
+	let size = 4; // set the size of the board
+	let vowels = "AEIOU"; // possible vowels
+	let consonants = "BCDFGHJKLMNPQRSTVWXYZ"; // possible consonants
+	let boardHTML = "";
+	let numVowels = Math.ceil(size * size * 0.5); // set the number of vowels to 50% of the total number of letters
 
-	for (let i = 0; i < letters.length; i++) {
-		const row = document.createElement('tr');
-
-		for (let j = 0; j < letters[i].length; j++) {
-			const cell = document.createElement('td');
-			cell.textContent = letters[i][j];
-			cell.addEventListener('click', selectLetter);
-			row.appendChild(cell);
+	for (let i = 0; i < size; i++) {
+		boardHTML += "<tr>";
+		for (let j = 0; j < size; j++) {
+			let randomLetter;
+			if (numVowels > 0) {
+				randomLetter = vowels.charAt(Math.floor(Math.random() * vowels.length));
+				numVowels--;
+			} else {
+				randomLetter = consonants.charAt(Math.floor(Math.random() * consonants.length));
+			}
+			let cellId = `cell-${i}-${j}`; // generate unique identifier for cell
+			boardHTML += `<td id="${cellId}">${randomLetter}</td>`; // set id attribute of cell
 		}
-
-		table.appendChild(row);
+		boardHTML += "</tr>";
 	}
-  }
-  
+
+	board.innerHTML = boardHTML; // add the generated board to the HTML
+
+	// add event listeners to tiles
+	let tiles = board.getElementsByTagName("td");
+	for (let i = 0; i < tiles.length; i++) {
+		if (gridEnabled) {
+			tiles[i].addEventListener("click", selectLetter);
+		}
+	}
+}
 
 function selectLetter(event) {
 	if (!gridEnabled) {
@@ -216,7 +232,7 @@ startButton.addEventListener('click', () => {
 	});*/
 
 	// Start countdown
-	let timeLeft = 180;
+	let timeLeft = 30;
 	const countdown = setInterval(() => {
 		timeLeft--;
 		timer.innerHTML = `Time Remaining: ${timeLeft} s`;
