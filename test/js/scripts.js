@@ -17,7 +17,7 @@ const rulesPopup = document.querySelector("#rules-popup");
 
 const closeLeaderBtn = document.querySelector("#close-leader-btn");
 const leaderPopup = document.querySelector("#leaderboard-popup");
-const ulLeaderboard = document.querySelector("#ulLeaderboard");					// ul for top players list
+const ulLeaderboard = document.querySelector("#ulLeaderboard");
 
 const wordList = document.querySelector('#word-list');
 const wordInput = document.querySelector('#word-input');
@@ -70,15 +70,19 @@ function selectLetter(event) {
 	const cell = event.target;
 	const letter = cell.innerHTML;
 
+	// If letter is not already selected
 	if (selectedLetters.includes(cell)) {
 		// Letter already selected, display message
 		message.innerHTML = `Letter ${letter} already selected!`;
 		console.log(`Letter ${letter} already selected!`);
 	} else {
+		// Get the last selected cell and its position
 		if (selectedLetters.length > 0) {
 			const lastSelectedCell = selectedLetters[selectedLetters.length - 1];
 			const lastSelectedRow = parseInt(lastSelectedCell.id.split("-")[1]);
 			const lastSelectedCol = parseInt(lastSelectedCell.id.split("-")[2]);
+
+			// Get the position of the current cell
 			const currentRow = parseInt(cell.id.split("-")[1]);
 			const currentCol = parseInt(cell.id.split("-")[2]);
 
@@ -228,7 +232,7 @@ startButton.addEventListener('click', () => {
 	});*/
 
 	// Start countdown
-	let timeLeft = 30;
+	let timeLeft = 180;
 	const countdown = setInterval(() => {
 		timeLeft--;
 		timer.innerHTML = `Time Remaining: ${timeLeft} s`;
@@ -277,9 +281,8 @@ closeLeaderBtn.addEventListener("click", function () {
 
 // ENTER
 
-wordInput.addEventListener('keydown', (event) => {
-	if (event.key == 'Enter') {
-		event.preventDefault();
-		submitButton.click();
+document.addEventListener('keydown', function (e) {
+	if (e.key === 'Enter' && e.target === document.body) {
+		submitWord();
 	}
 });
