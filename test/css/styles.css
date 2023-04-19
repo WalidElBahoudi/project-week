@@ -41,6 +41,7 @@ td {
     text-align: center;
     width: 25%;
     transition: background-color 0.3s;
+	cursor: pointer;
 }
 
 td:hover {

@@ -1,77 +1,209 @@
-const letters = [
+/*const letters = [
 	['A', 'B', 'C', 'D'],
 	['E', 'F', 'G', 'H'],
 	['I', 'J', 'K', 'L'],
 	['M', 'N', 'O', 'P']
-];
+];*/
+
+//const board = generateBoard(4);
+
+const startButton = document.querySelector('#start-button');
+const resetButton = document.querySelector('#reset-button');
+const submitButton = document.querySelector('#submit-button');
+
+const rulesBtn = document.querySelector("#rules-btn");
+const closeRulesBtn = document.querySelector("#close-rules-btn");
+const rulesPopup = document.querySelector("#rules-popup");
+
+const closeLeaderBtn = document.querySelector("#close-leader-btn");
+const leaderPopup = document.querySelector("#leaderboard-popup");
+const ulLeaderboard = document.querySelector("#ulLeaderboard");
+
+const wordList = document.querySelector('#word-list');
+const wordInput = document.querySelector('#word-input');
 
 let selectedLetters = [];
 let wordsFound = [];
-const wordInput = document.querySelector('#word-input');
-const wordList = document.querySelector('#word-list');
+let totalScore = 0; // initialize the total score variable
+let gridEnabled = false; // disable grid initially
+let board = document.querySelector("#board");
+
 
 function generateBoard() {
-	const gameGrid = document.querySelector('#game-grid');
-  
+	const table = document.querySelector('table');
+
 	for (let i = 0; i < letters.length; i++) {
-	  for (let j = 0; j < letters[i].length; j++) {
-		const cellButton = document.createElement('button');
-		cellButton.className = 'grid-cell';
-		cellButton.id = `cell-${i * letters.length + j + 1}`;
-		cellButton.textContent = letters[i][j];
-		cellButton.addEventListener('click', selectLetter);
-		gameGrid.appendChild(cellButton);
-	  }
+		const row = document.createElement('tr');
+
+		for (let j = 0; j < letters[i].length; j++) {
+			const cell = document.createElement('td');
+			cell.textContent = letters[i][j];
+			cell.addEventListener('click', selectLetter);
+			row.appendChild(cell);
+		}
+
+		table.appendChild(row);
 	}
   }
   
 
 function selectLetter(event) {
+	if (!gridEnabled) {
+		return;
+	}
 	const cell = event.target;
-	wordInput.value += cell.textContent;
+	const letter = cell.innerHTML;
+
+	// If letter is not already selected
+	if (selectedLetters.includes(cell)) {
+		// Letter already selected, display message
+		message.innerHTML = `Letter ${letter} already selected!`;
+		console.log(`Letter ${letter} already selected!`);
+	} else {
+		// Get the last selected cell and its position
+		if (selectedLetters.length > 0) {
+			const lastSelectedCell = selectedLetters[selectedLetters.length - 1];
+			const lastSelectedRow = parseInt(lastSelectedCell.id.split("-")[1]);
+			const lastSelectedCol = parseInt(lastSelectedCell.id.split("-")[2]);
+
+			// Get the position of the current cell
+			const currentRow = parseInt(cell.id.split("-")[1]);
+			const currentCol = parseInt(cell.id.split("-")[2]);
+
+			// check if selected cell is adjacent to last selected cell
+			const rowDiff = Math.abs(currentRow - lastSelectedRow);
+			const colDiff = Math.abs(currentCol - lastSelectedCol);
+			if (rowDiff <= 1 && colDiff <= 1 && (rowDiff + colDiff != 0)) {
+				// add selected cell to selectedLetters array
+				cell.classList.add('selected');
+				selectedLetters.push(cell);
+				wordInput.value += letter;
+			} else {
+				// display error message
+				message.innerHTML = `Selected cell must be adjacent to last selected cell!`;
+			}
+		} else {
+			// add selected cell to selectedLetters array
+			cell.classList.add('selected');
+			selectedLetters.push(cell);
+			wordInput.value += letter;
+		}
+	}
+}
+
+function ScoreCalc(word) {
+	let score = 0;
+	if (word.length == 4 || word.length == 3) {
+		score++;
+	}
+	if (word.length == 5) {
+		score += 2;
+	}
+	if (word.length == 6) {
+		score += 3;
+	}
+	if (word.length == 7) {
+		score += 5;
+	}
+	if (word.length == 8) {
+		score += 11;
+	}
+	if (word.length > 8) {
+		score += word.length * 2;
+	}
+	if (word.length < 3) {
+		alert("word needs to have a minimum of 3 characters.");
+	}
+	return score
 }
 
 function submitWord() {
 	const apiUrl = `https://api.dictionaryapi.dev/api/v2/entries/en/${wordInput.value}`;
-	message.textContent = '';
-	if (wordInput.value.length < 3){
-		message.textContent = 'Word must have at least 3 characters!';
+	message.innerHTML = '';
+
+	if (wordInput.value.length < 3) {
+		message.innerHTML = 'Word must have at least 3 characters!';
+		selectedLetters.forEach(cell => cell.classList.remove('selected'));
+		selectedLetters = [];
+		wordInput.value = "";
 		return;
 	}
+
+	// Check if word contains letters not in the grid
+	for (let i = 0; i < wordInput.value.length; i++) {
+		const letter = wordInput.value.charAt(i).toUpperCase();
+		let isInGrid = false;
+		for (let j = 0; j < selectedLetters.length; j++) {
+			const cellLetter = selectedLetters[j].innerHTML.toUpperCase();
+			if (letter === cellLetter) {
+				isInGrid = true;
+				break;
+			}
+		}
+		if (!isInGrid) {
+			message.innerHTML = `Word contains letter ${letter} not in the grid!`;
+			selectedLetters.forEach(cell => cell.classList.remove('selected'));
+			selectedLetters = [];
+			wordInput.value = "";
+			return;
+		}
+	}
+
 	fetch(apiUrl)
 		.then(response => response.json())
 		.then(data => {
-			// do something with the definition data
-			console.log(data);
 			if (data.title == "No Definitions Found") {
 				const message = document.querySelector('#message');
-				message.textContent = 'Word not found!';
+				message.innerHTML = 'Word not found!';
+				selectedLetters.forEach(cell => cell.classList.remove('selected'));
+				selectedLetters = [];
+				wordInput.value = "";
 			} else {
-
-				if (wordsFound.includes(wordInput.value)) {
-					message.textContent = 'Word already found!';
+				// Scoring system based on word length
+				const word = wordInput.value.toUpperCase();
+				const score = ScoreCalc(word);
+				if (wordsFound.includes(word)) {
+					message.innerHTML = 'Word already found!';
 				} else {
-					wordsFound.push(wordInput.value);
-					wordList.textContent = `Words Found: ${wordsFound.join(', ')}`;
+					wordsFound.push(word);
+					wordList.innerHTML = `Words Found: ${wordsFound.join(', ')}`;
 					wordInput.value = '';
+
+					// add the score for the current word to the total score
+					totalScore += score;
+					console.log(`Score for ${word}: ${score}`);
+					console.log(`Total Score: ${totalScore}`);
+
+					// update leaderboard
+					const liLeaderboard = document.createElement('li');
+					liLeaderboard.innerText = `Total Score: ${totalScore}`;
+					ulLeaderboard.appendChild(liLeaderboard);
+
+					// Clear selected letters and input value
+					selectedLetters.forEach(cell => cell.classList.remove('selected'));
+					selectedLetters = [];
+					wordInput.value = "";
 				}
 			}
 		})
 		.catch(error => console.log(error));
+
 }
 
-function checkWord(word) {
+/*function checkWord(word) {
 	if (word.includes(word)) {
 		return true;
 	} else {
 		return false;
 	}
-}
+}*/
 
 generateBoard();
 
-const startButton = document.querySelector('#start-button');
 startButton.addEventListener('click', () => {
+	gridEnabled = true;
+	generateBoard();
+	/*
 	const vowels = ['A', 'E', 'I', 'O', 'U'];
 	const consonants = ['B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'X', 'Y', 'Z'];
 	const gameBoard = document.querySelectorAll('#game-board td');
@@ -80,21 +212,23 @@ startButton.addEventListener('click', () => {
 	gameBoard.forEach((cell) => {
 		const isVowel = Math.random() < 0.5;
 		const randomLetter = isVowel ? vowels[Math.floor(Math.random() * vowels.length)] : consonants[Math.floor(Math.random() * consonants.length)];
-		cell.textContent = randomLetter;
-	});
+		cell.innerHTML = randomLetter;
+	});*/
 
 	// Start countdown
 	let timeLeft = 180;
 	const countdown = setInterval(() => {
 		timeLeft--;
-		timer.textContent = `Time Remaining: ${timeLeft} s`;
+		timer.innerHTML = `Time Remaining: ${timeLeft} s`;
 
 		if (timeLeft <= 0) {
 			clearInterval(countdown);
-			timer.textContent = 'Time is up!';
+			timer.innerHTML = 'Time is up!';
 			startButton.disabled = false;
 			submitButton.disabled = true;
-			leaderboardpopup.style.display = "block";
+
+			// popup leaderboard
+			leaderPopup.style.display = "block";
 		}
 	}
 		, 1000);
@@ -103,25 +237,17 @@ startButton.addEventListener('click', () => {
 	startButton.disabled = true;
 });
 
-const resetButton = document.getElementById('reset-button');
 resetButton.addEventListener('click', resetGame);
 
 function resetGame() {
 	location.reload();
+	gridEnabled = false;
 }
 
-const submitButton = document.querySelector('#submit-button');
 submitButton.addEventListener('click', submitWord);
 
 // POPUP REGELS
 
-const rulesBtn = document.getElementById("rules-btn");
-const closeRulesBtn = document.getElementById("close-rules-btn");
-const rulesPopup = document.getElementById("rules-popup");
-
-const leaderBtn = document.getElementById("leader-btn");
-const closeLeaderBtn = document.getElementById("close-leader-btn");
-const leaderPopup = document.getElementById("leaderboard-popup");
 
 rulesBtn.addEventListener("click", function () {
 	rulesPopup.style.display = "block";
@@ -131,23 +257,16 @@ closeRulesBtn.addEventListener("click", function () {
 	rulesPopup.style.display = "none";
 });
 
-// POPUP RANKING
+// POPUP LEADERBOARD
 
-const rankingBtn = document.getElementById("ranking-btn");
-const closeleaderBtn = document.getElementById("close-leader-btn");
-const leaderboardpopup = document.getElementById("leaderboard-popup");
-
-
-
-closeleaderBtn.addEventListener("click", function () {
-	leaderboardpopup.style.display = "none";
+closeLeaderBtn.addEventListener("click", function () {
+	leaderPopup.style.display = "none";
 });
 
 // ENTER
 
-wordInput.addEventListener('keydown', (event) => {
-	if (event.key == 'Enter') {
-		event.preventDefault();
-		submitButton.click();
+document.addEventListener('keydown', function (e) {
+	if (e.key === 'Enter' && e.target === document.body) {
+		submitWord();
 	}
 });
