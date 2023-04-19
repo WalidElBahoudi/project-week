@@ -231,3 +231,31 @@ header .wrapper {
     backdrop-filter: blur(5px);
   }
   
+  #word-input{
+    color: white;
+  }
+
+  /* Animation d'astres célestes */
+/* Animation d'astres célestes */
+.star {
+    position: fixed;
+    width: 2px;
+    height: 2px;
+    background-color: white;
+    z-index: -1;
+    animation-name: twinkling;
+    animation-duration: 1.5s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+  }
+  
+  @keyframes twinkling {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  

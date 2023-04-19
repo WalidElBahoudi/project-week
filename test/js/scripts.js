@@ -299,4 +299,18 @@ function createStars(numberOfStars) {
   }
   
   createStars(150); // Ajustez le nombre d'étoiles en fonction de vos préférences
+
+  function createStars() {
+	for (let i = 0; i < 100; i++) {
+	  const star = document.createElement('div');
+	  star.classList.add('star');
+	  star.style.top = Math.random() * 100 + 'vh';
+	  star.style.left = Math.random() * 100 + 'vw';
+	  star.style.animationDelay = Math.random() * 1.5 + 's';
+	  document.body.appendChild(star);
+	}
+  }
+  
+  createStars();
+  
   
